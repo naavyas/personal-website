@@ -4,16 +4,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/** Update this to the real data-art repo URL. */
-const GITHUB_REPO = "https://github.com/naavyasethi";
+const GITHUB_REPO = "https://github.com/naavyas";
 
-const NAVY = "#2C2D41";
-const CORAL = "#DC3C44";
+const EARTH = "#5a4339";
+const COCOA = "#a1887f";
 
 const reduceMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)"
 ).matches;
-const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -27,12 +25,10 @@ $$("#github-work, #github-contact").forEach((el) =>
   el.setAttribute("href", GITHUB_REPO)
 );
 
-/* ── Generic scroll-in reveals ──────────────────────────────────────────
-   Everything that just needs to arrive rather than be scroll-linked runs
-   through one observer, so we're not paying for a ScrollTrigger per node. */
+/* ── Generic scroll-in reveals ──────────────────────────────────────── */
 
 function initReveals() {
-  const targets = $$(".reveal, .sketch");
+  const targets = $$(".reveal");
   if (reduceMotion) {
     targets.forEach((el) => el.classList.add("is-in"));
     return;
@@ -49,23 +45,10 @@ function initReveals() {
     { rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
   );
 
-  // Stagger siblings inside a grid so cards land in sequence, not as a slab.
-  [".art-grid", ".sketch-scatter"].forEach((sel) => {
-    $$(sel).forEach((group) => {
-      Array.from(group.children).forEach((child, i) => {
-        child.style.transitionDelay = `${i * 90}ms`;
-      });
-    });
-  });
-
   targets.forEach((el) => io.observe(el));
 }
 
-/* ══ 1. Hero — zoom into the middle "a", then drop into the dark ═══════
-   The letter swells until it owns the viewport, flashes coral, then it and
-   the light plane resolve to navy on the same beat. Landing both at once
-   means the handoff works whether the camera ends on ink or on the
-   letter's counter — no dependence on font metrics. */
+/* ══ 1. Hero — zoom into the middle "a" ═══════════════════════════════ */
 
 function setZoomOrigin() {
   const zoom = $(".intro-zoom");
@@ -108,7 +91,6 @@ function initHero() {
   window.addEventListener("resize", setZoomOrigin);
 
   if (reduceMotion) {
-    // No scale transform at all — the palette shift is a plain crossfade.
     ScrollTrigger.create({
       trigger: section,
       start: "bottom 85%",
@@ -143,18 +125,14 @@ function initHero() {
     .to(zoom, { scale: zoomScale, duration: 1.3, ease: "none" }, 0.05)
     .to(words, { opacity: 0, duration: 0.16, ease: "none" }, 0.06)
     .to(chars, { opacity: 0, duration: 0.24, stagger: 0.02, ease: "none" }, 0.1)
-    .to(accent, { color: CORAL, duration: 0.22, ease: "none" }, 0.2)
-    // Both land on navy together: the doorway closes behind you.
-    .to(accent, { color: NAVY, duration: 0.18, ease: "power2.in" }, 0.68)
+    .to(accent, { color: COCOA, duration: 0.22, ease: "none" }, 0.2)
+    .to(accent, { color: EARTH, duration: 0.18, ease: "power2.in" }, 0.68)
     .to(backdrop, { opacity: 0, duration: 0.18, ease: "power2.in" }, 0.68)
     .to(zoom, { opacity: 0, duration: 0.15, ease: "none" }, 0.95)
     .to({}, { duration: 0.45 });
 }
 
-/* ══ 2 + 3. The thread — crayon scribble → node/edge network ═══════════
-   One <polyline>. It draws itself in for the childhood beat, then every
-   point lerps to a walk through a graph layout for the convergence beat,
-   so the network is literally the same line rearranged. */
+/* ══ 2 + 3. The thread — crayon scribble → node/edge network ═══════════ */
 
 const SCRIBBLE = [
   [90, 470], [150, 330], [205, 205], [268, 118], [330, 150], [352, 268],
@@ -169,7 +147,6 @@ const NODES = [
   [700, 398], [886, 438],
 ];
 
-/** Edges beyond the traversal, faded in once the morph settles. */
 const EXTRA_EDGES = [
   [0, 5], [1, 5], [2, 4], [3, 8], [4, 8], [5, 7],
   [7, 12], [8, 12], [9, 11], [10, 12], [11, 13],
@@ -204,8 +181,6 @@ function catmullRom(pts, seg = 18) {
   return out;
 }
 
-/** Even arc-length resample, so point i of the scribble and point i of the
-    graph walk sit at the same fraction along each shape. */
 function resample(pts, n) {
   const dist = [0];
   for (let i = 1; i < pts.length; i++) {
@@ -272,8 +247,6 @@ function initThread() {
     return el;
   });
 
-  // pathLength normalises the dash maths, so the draw-in is unaffected by
-  // the geometry changing underneath it during the morph.
   line.setAttribute("pathLength", "1");
   line.style.strokeDasharray = "1 1";
 
@@ -302,7 +275,6 @@ function initThread() {
   });
 
   tl
-    // Beat 2 — the scribble draws itself in.
     .to(
       state,
       {
@@ -320,8 +292,6 @@ function initThread() {
       0.1
     )
     .to(copies[0], { opacity: 0, y: -22, duration: 0.12, ease: "none" }, 0.36)
-
-    // Beat 3 — the same stroke resolves into a graph.
     .to(
       state,
       {
@@ -360,27 +330,95 @@ function initThread() {
     .to({}, { duration: 0.12 });
 }
 
-/* ══ Beat A — stand-ins for sketches that aren't on disk yet ═══════════ */
+/* ══ Gallery stack — click / swipe / arrows to rotate ═════════════════ */
 
-function initSketchFallbacks() {
-  $$(".sketch img[data-fallback]").forEach((img) => {
-    const fail = () => {
-      const fig = img.closest(".sketch");
-      if (!fig || fig.classList.contains("is-missing")) return;
-      fig.classList.add("is-missing");
-      const note = document.createElement("p");
-      note.className = "sketch-placeholder";
-      note.textContent = `${img.dataset.fallback} — drop file in public/art/`;
-      fig.appendChild(note);
-    };
-    if (img.complete && img.naturalWidth === 0) fail();
-    img.addEventListener("error", fail);
+function initGalleryStack() {
+  const root = $("#gallery-stack");
+  if (!root) return;
+
+  const cards = $$(".gallery-card", root);
+  const hit = $(".gallery-hit", root);
+  if (!cards.length || !hit) return;
+
+  let order = cards.map((_, i) => i);
+  let busy = false;
+
+  const layout = () => {
+    order.forEach((cardIndex, depth) => {
+      const card = cards[cardIndex];
+      const isFront = depth === 0;
+      const offset = depth * 14;
+      const scale = 1 - depth * 0.045;
+      card.style.zIndex = String(cards.length - depth);
+      card.style.opacity = depth > 3 ? "0" : String(1 - depth * 0.08);
+      card.style.pointerEvents = isFront ? "auto" : "none";
+      card.style.transform = `translate3d(${offset}px, ${offset}px, 0) scale(${scale})`;
+    });
+  };
+
+  const advance = () => {
+    if (busy || order.length < 2) return;
+    busy = true;
+    const frontIdx = order[0];
+    const front = cards[frontIdx];
+
+    if (reduceMotion) {
+      order = [...order.slice(1), frontIdx];
+      layout();
+      busy = false;
+      return;
+    }
+
+    front.style.transition = "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease";
+    front.style.transform = "translate3d(-28%, -8%, 0) rotate(-8deg) scale(0.92)";
+    front.style.opacity = "0";
+
+    window.setTimeout(() => {
+      order = [...order.slice(1), frontIdx];
+      front.style.transition = "none";
+      layout();
+      // Force reflow so the next transition starts clean.
+      void front.offsetWidth;
+      front.style.transition = "";
+      busy = false;
+    }, 420);
+  };
+
+  layout();
+
+  hit.addEventListener("click", (e) => {
+    e.preventDefault();
+    advance();
   });
+
+  root.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") {
+      e.preventDefault();
+      advance();
+    }
+  });
+
+  let touchX = null;
+  root.addEventListener(
+    "touchstart",
+    (e) => {
+      touchX = e.changedTouches[0]?.clientX ?? null;
+    },
+    { passive: true }
+  );
+  root.addEventListener(
+    "touchend",
+    (e) => {
+      if (touchX == null) return;
+      const dx = (e.changedTouches[0]?.clientX ?? touchX) - touchX;
+      touchX = null;
+      if (Math.abs(dx) > 40) advance();
+    },
+    { passive: true }
+  );
 }
 
-/* ══ Beat C — lazy video + the second scale moment ═════════════════════
-   16 MB, so nothing is fetched until it's actually near the viewport. The
-   frame widens toward full-bleed as you come to it. */
+/* ══ Beat C — lazy video + scale on scroll ════════════════════════════ */
 
 function initVideo() {
   const video = $(".beat-video-el");
@@ -425,43 +463,19 @@ function initVideo() {
   );
 }
 
-/* ══ Hover micro-interactions — a slight lean, nothing acrobatic ══════ */
-
-function initTilt() {
-  if (reduceMotion || !canHover) return;
-
-  $$(".art-card-media").forEach((card) => {
-    const setX = gsap.quickTo(card, "rotationY", { duration: 0.5, ease: "power3" });
-    const setY = gsap.quickTo(card, "rotationX", { duration: 0.5, ease: "power3" });
-    gsap.set(card, { transformPerspective: 900 });
-
-    card.addEventListener("pointermove", (e) => {
-      const r = card.getBoundingClientRect();
-      setX(((e.clientX - r.left) / r.width - 0.5) * 7);
-      setY(((e.clientY - r.top) / r.height - 0.5) * -5);
-    });
-    card.addEventListener("pointerleave", () => {
-      setX(0);
-      setY(0);
-    });
-  });
-}
-
 /* ── Boot ───────────────────────────────────────────────────────────── */
 
 initReveals();
 initHero();
 initThread();
-initSketchFallbacks();
+initGalleryStack();
 initVideo();
-initTilt();
 
 window.addEventListener("load", () => {
   setZoomOrigin();
   ScrollTrigger.refresh();
 });
 
-// Web fonts change glyph metrics, which moves the zoom origin.
 if (document.fonts?.ready) {
   document.fonts.ready.then(() => {
     setZoomOrigin();

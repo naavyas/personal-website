@@ -6,32 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Naavya Sethi — design portfolio. Generative data art at the intersection of computer science and visual practice."
+      content="Naavya Sethi - generative data art at the intersection of computer science and visual practice."
     />
-    <title>Naavya Sethi — Design Portfolio</title>
+    <title>Naavya Sethi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
     <div class="grain" aria-hidden="true"></div>
-    <!-- Light "before the zoom" plane. Opacity is driven to 0 by the hero zoom. -->
     <div class="stage-backdrop" aria-hidden="true"></div>
 
     <header class="site-header">
       <a class="brand" href="#top">Naavya</a>
       <nav class="nav" aria-label="Primary">
         <a href="#work">Work</a>
-        <a href="#about">About</a>
         <a href="#contact">Contact</a>
       </nav>
     </header>
 
     <main id="top">
-      <!-- ══ 1. Hero — name zoom into a dark shift ══════════════════════ -->
+      <!-- ══ 1. Hero ════════════════════════════════════════════════════ -->
       <section class="chapter chapter-intro" id="intro">
         <div class="chapter-pin">
           <div class="intro-stage">
@@ -52,10 +50,7 @@
         </div>
       </section>
 
-      <!-- ══ 2 + 3. Childhood spark → convergence ═══════════════════════
-           One continuous stroke lives across both beats: it draws itself in
-           like a crayon scribble, then morphs point-for-point into a
-           node-edge network. Same line, two states. -->
+      <!-- ══ 2 + 3. Childhood spark → convergence ═══════════════════════ -->
       <section class="chapter chapter-thread" id="spark">
         <div class="thread-sticky">
           <div class="thread-canvas">
@@ -83,16 +78,13 @@
                   />
                 </filter>
               </defs>
-              <!-- extra graph edges, faded in once the morph completes -->
               <g class="thread-edges" fill="none" stroke-linecap="round"></g>
-              <!-- the one continuous stroke (points written by JS) -->
               <polyline
                 class="thread-line"
                 fill="none"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
-              <!-- graph nodes, popped in at the end -->
               <g class="thread-nodes"></g>
             </svg>
           </div>
@@ -116,198 +108,39 @@
           <p class="section-label">Project 01</p>
           <h2 class="project-title">Generative Data Art</h2>
           <p class="project-standfirst">
-            A restaurant network from Bangalore, drawn four different ways —
-            from first rough experiments to a published paper.
           </p>
         </header>
 
-        <!-- ── Beat A — raw sketches ─────────────────────────────────── -->
-        <div class="beat beat-sketches" id="beat-a">
-          <div class="beat-head reveal">
-            <p class="beat-label">Beat A — First passes</p>
-            <p class="beat-copy">
-              Thin lines on black. No palette, no layout algorithm, no idea yet
-              what the shape wanted to be — just Python, a plotting window, and
-              a few thousand edges.
-            </p>
-          </div>
-          <div class="sketch-scatter">
-            <figure class="sketch" data-sketch="1">
-              <img
-                src="/art/sketch-01.png"
-                alt="Early Python sketch: magenta and green wireframe lines on black"
-                loading="lazy"
-                decoding="async"
-                data-fallback="sketch-01.png"
-              />
-            </figure>
-            <figure class="sketch" data-sketch="2">
-              <img
-                src="/art/sketch-02.png"
-                alt="Early Python sketch: blue and green angular wireframe on black"
-                loading="lazy"
-                decoding="async"
-                data-fallback="sketch-02.png"
-              />
-            </figure>
-            <figure class="sketch" data-sketch="3">
-              <img
-                src="/art/sketch-03.png"
-                alt="Early Python sketch: yellow, brown and magenta strokes on black"
-                loading="lazy"
-                decoding="async"
-                data-fallback="sketch-03.png"
-              />
-            </figure>
-          </div>
-        </div>
-
-        <!-- ── Beat B — refined network art ──────────────────────────── -->
-        <div class="beat beat-refined" id="beat-b">
-          <div class="beat-head reveal">
-            <p class="beat-label">Beat B — Legible</p>
-            <p class="beat-copy">
-              Same graph, same rule. Now the colour means something: community
-              detection sets the hue, modularity sets the grouping, centrality
-              sets the size.
-            </p>
-          </div>
-          <div class="art-grid">
-            <figure class="art-card reveal">
-              <div class="art-card-media">
-                <img
-                  src="/art/circular-clean.png"
-                  alt="Circular network visualization of Zomato delivery communities"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <figcaption>
-                <span class="slide-index">01</span>
-                <span class="slide-title">Community circles</span>
-                <span class="slide-desc"
-                  >Delivery nodes as a living chord — pastel arcs across a
-                  city-scale graph.</span
-                >
-              </figcaption>
-            </figure>
-            <figure class="art-card reveal">
-              <div class="art-card-media">
-                <img
-                  src="/art/paper-spinner-leaf.png"
-                  alt="Paper-spinner leaf form from modularity-ordered graph nodes"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <figcaption>
-                <span class="slide-index">02</span>
-                <span class="slide-title">Paper-spinner</span>
-                <span class="slide-desc"
-                  >Nodes aligned on a spine by community size, edges drawn as
-                  randomized curves.</span
-                >
-              </figcaption>
-            </figure>
-            <figure class="art-card reveal">
-              <div class="art-card-media">
-                <img
-                  src="/art/paper-spinner-fan.png"
-                  alt="Asymmetrical fan form of generative data art communities"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <figcaption>
-                <span class="slide-index">03</span>
-                <span class="slide-title">Partition fans</span>
-                <span class="slide-desc"
-                  >Each petal a community — colour marking different partitions
-                  in the graph.</span
-                >
-              </figcaption>
-            </figure>
-            <figure class="art-card reveal">
-              <div class="art-card-media">
-                <img
-                  src="/art/radial-curved.png"
-                  alt="Curved radial generative form from Zomato network layouts"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <figcaption>
-                <span class="slide-index">04</span>
-                <span class="slide-title">Radial forms</span>
-                <span class="slide-desc"
-                  >Top communities on a circle; the rest along an axis — curved
-                  connections as flame.</span
-                >
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-
-        <!-- ── Beat C — Java / Processing generative video ────────────── -->
-        <div class="beat beat-video" id="beat-c">
-          <div class="beat-head reveal">
-            <p class="beat-label">Beat C — In Processing</p>
-            <p class="beat-copy">
-              Rewritten in Java. The same rule, run again and again — colour is
-              the only variable.
-            </p>
-          </div>
-          <div class="video-stage">
-            <div class="video-frame">
-              <video
-                class="beat-video-el"
-                data-src="/video/data-art.mp4"
-                muted
-                playsinline
-                loop
-                preload="none"
-                disablepictureinpicture
-                aria-label="Grid of generative radial burst forms, each frame a different palette"
-              ></video>
-            </div>
-          </div>
-          <p class="video-caption reveal">
-            Sixteen runs of one generative rule, side by side. Nothing changes
-            but the palette.
-          </p>
-        </div>
-
-        <!-- ── Beat D — the research paper ───────────────────────────── -->
-        <div class="beat beat-paper" id="beat-d">
+        <!-- Research paper first — then the graphs -->
+        <div class="beat beat-paper" id="beat-paper">
           <div class="paper-grid">
             <div class="paper-copy reveal">
-              <p class="beat-label">Beat D — The paper</p>
+              <p class="beat-label">The paper</p>
               <h3 class="paper-title">
                 Network Analysis and Generation of Data Art from Restaurants
                 Data
               </h3>
               <p>
-                The visuals came out of a co-authored paper on Bangalore's
-                restaurant scene. We took Zomato's data — cuisines, menus,
-                featured dishes, reviews — and built a similarity network across
-                <strong>8,792 restaurants</strong>: TF-IDF embeddings per
-                restaurant, then nearest-neighbour matching on the twenty
-                closest, quantile-weighted into
-                <strong>147,424 edges</strong>.
+                This all grew out of a co-authored paper on Bangalore's
+                restaurant scene. We pulled Zomato data - cuisines, menus,
+                featured dishes, reviews - and built a similarity network across
+                <strong>8,792 restaurants</strong>: TF-IDF embeddings per place,
+                then nearest-neighbour matching on the twenty closest,
+                quantile-weighted into <strong>147,424 edges</strong>.
               </p>
               <p>
-                Community detection ran four ways — Label Propagation, Louvain
+                Community detection ran four ways - Label Propagation, Louvain
                 with a Constant Potts Model, Demon, and Bayesian statistical
-                inference. Demon read best: it grouped restaurants by region —
-                Tamil Nadu, Bihar, the Delhi–Punjab–Haryana belt — with no
+                inference. Demon read best: it grouped restaurants by region -
+                Tamil Nadu, Bihar, the Delhi-Punjab-Haryana belt - with no
                 location data in the graph at all.
               </p>
               <p>
-                The argument the paper makes is the one this page is built on: a
-                bar chart would have told you the degree distribution follows a
-                power law. It would not have shown you which communities sit
-                next to each other, or which restaurant is quietly bridging two
-                cuisines it has no business bridging.
+                A bar chart would have told you the degree distribution follows
+                a power law. It would not have shown which communities sit next
+                to each other, or which restaurant is quietly bridging two
+                cuisines it has no business bridging. So we turned the analysis
+                into graphs.
               </p>
               <a
                 class="btn"
@@ -328,106 +161,185 @@
             </dl>
           </div>
         </div>
-      </section>
 
-      <!-- ══ 5. Project 2 — AI Image Dashboard ══════════════════════════
-           ⚠️ PLACEHOLDER COPY — Naavya to confirm before launch:
-             • timeframe / dates
-             • her specific role on the project
-             • tech stack (which image + voice models, what the dashboard ran on)
-             • whether the generated imagery and audio can be shown publicly
-               or only described
-           Type-driven treatment for now, no imagery. Swap in visuals once
-           cleared, using the same .art-grid / .art-card markup as Beat B. -->
-      <section class="chapter project project--statement" id="summit">
-        <header class="project-head reveal">
-          <p class="section-label">Project 02</p>
-          <h2 class="project-title">AI Image Dashboard</h2>
-          <p class="project-standfirst">
-            Microsoft Ethical Tech Summit
-          </p>
-        </header>
+        <!-- Gallery stack — flip through the network graphs -->
+        <div class="beat beat-gallery" id="beat-graphs">
+          <div class="beat-head reveal">
+            <p class="beat-label">The graphs</p>
+            <p class="beat-copy look-below">Look at the graphs below.</p>
+            <p class="beat-copy">
+              Same network, different layouts. Colour marks community; size
+              follows centrality. Click the stack to flip through.
+            </p>
+          </div>
 
-        <div class="statement-grid">
-          <p class="statement-line reveal">
-            Led an AI image dashboard project for Microsoft, presented at the
-            Microsoft&nbsp;Ethical&nbsp;Tech&nbsp;Summit.
-          </p>
-          <div class="statement-body reveal">
-            <p>
-              The dashboard used AI-generated images and voices to tell the
-              stories of people experiencing suffering around the world, running
-              on a large screen at the summit.
-            </p>
-            <p>
-              The point of it was the hard part: using generative image and
-              voice models responsibly enough to carry real human stories,
-              rather than to make pretty pictures.
-            </p>
+          <div class="gallery-stack reveal" id="gallery-stack" tabindex="0" role="region" aria-label="Network graph gallery. Click or press arrow keys to flip.">
+            <button type="button" class="gallery-hit" aria-label="Show next graph">
+              <div class="gallery-deck">
+                <figure class="gallery-card" data-index="0">
+                  <img
+                    src="art/Circular Layouts.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="1">
+                  <img
+                    src="art/Force Atlas 1.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="2">
+                  <img
+                    src="art/Force Atlas 2.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false" 
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="3">
+                  <img
+                    src="art/Force Atlas 3.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="4">
+                  <img
+                    src="art/Force Atlas 4.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="5">
+                  <img
+                    src="art/Label Propagation.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="6">
+                  <img
+                    src="art/Louvain Algorithm.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="7">
+                  <img
+                    src="art/Paper-Spinner1.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="8">
+                  <img
+                    src="art/Paper-Spinner2.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="9">
+                  <img
+                    src="art/Radial 1.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="10">
+                  <img
+                    src="art/Radial 2.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="11">
+                  <img
+                    src="art/Rectangular Layouts:.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+                <figure class="gallery-card" data-index="12">
+                  <img
+                    src="art/Statistical Inference.png"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </figure>
+              </div>
+            </button>
+            <p class="gallery-hint" aria-hidden="true">Click to flip</p>
           </div>
         </div>
       </section>
 
-      <!-- ══ 6. About ═══════════════════════════════════════════════════ -->
-      <section class="chapter chapter-about" id="about">
-        <div class="about-grid">
-          <div class="about-copy reveal">
-            <p class="section-label">About</p>
-            <h2 class="about-name">Naavya Sethi</h2>
+      <!-- Project 2 - Generative Runs -->
+      <section class="chapter project project--video" id="generative-runs">
+        <header class="project-head reveal">
+          <p class="section-label">Project 02</p>
+          <h2 class="project-title">Generative Runs</h2>
+          <p class="project-standfirst">
+            Used Java to run a generative algorithm in a way in which no
+            output is ever the same - it builds unique patterns by picking
+            different hexadecimal codes through a random algorithm.
+          </p>
+        </header>
+
+        <div class="beat beat-video" id="beat-c">
+          <div class="video-stage">
+            <div class="video-frame">
+              <video
+                class="beat-video-el"
+                data-src="/video/data-art.mp4"
+                muted
+                playsinline
+                loop
+                preload="none"
+                disablepictureinpicture
+                aria-label="Grid of generative radial burst forms, each frame a different palette"
+              ></video>
+            </div>
+          </div>
+          <p class="video-caption reveal">
+
+          </p>
+        </div>
+      </section>
+
+      <!-- Project 3 - AI Image Dashboard -->
+      <section class="chapter project project--statement" id="summit">
+        <header class="project-head reveal">
+          <p class="section-label">Project 03</p>
+          <h2 class="project-title">AI Image Dashboard</h2>
+          <p class="project-standfirst">Microsoft Ethical Tech Summit</p>
+        </header>
+
+        <div class="statement-grid">
+          <p class="statement-line reveal">
+            Worked with Professor Rhodes to create an
+            interactive AI dashboard for the Microsoft Ethical Tech Summit.
+          </p>
+          <div class="statement-body reveal">
             <p>
-              I'm a senior at NYU studying computer science, with a minor in
-              fashion studies.
-            </p>
-            <p>
-              I've interned at Ripple and EY, and worked with Microsoft and
-              Kalshi. I'm excited about software engineering, product, and
-              technical writing.
-            </p>
-            <p>
-              Feel free to reach out at
-              <a href="mailto:ns5810@nyu.edu">ns5810@nyu.edu</a>.
+              We generated images of people from different
+              parts of the world telling their stories through AI generated avatars and voices. An attendee at the tech summit could step close to the dashboard, and interact
+              with any avatar, almost making it life like.
             </p>
           </div>
-          <aside class="about-aside reveal">
-            <p class="section-label">Selected work</p>
-            <ul class="work-list">
-              <li>
-                <a
-                  href="https://github.com/naavyasethi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="work-item"
-                  id="github-work"
-                >
-                  <span class="work-item-title">Generative Data Art</span>
-                  <span class="work-item-meta"
-                    >Zomato network visualizations</span
-                  >
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/art/research-paper-data-art.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="work-item"
-                >
-                  <span class="work-item-title"
-                    >Network Analysis and Generation of Data Art</span
-                  >
-                  <span class="work-item-meta">Research paper</span>
-                </a>
-              </li>
-              <li>
-                <a href="#summit" class="work-item">
-                  <span class="work-item-title">AI Image Dashboard</span>
-                  <span class="work-item-meta"
-                    >Microsoft Ethical Tech Summit</span
-                  >
-                </a>
-              </li>
-            </ul>
-          </aside>
         </div>
       </section>
 
@@ -439,7 +351,7 @@
           <div class="contact-links">
             <a href="mailto:ns5810@nyu.edu">Email</a>
             <a
-              href="https://github.com/naavyasethi"
+              href="https://github.com/naavyas"
               target="_blank"
               rel="noopener noreferrer"
               id="github-contact"
@@ -458,7 +370,7 @@
 
     <footer class="site-footer">
       <p>© <span id="year"></span> Naavya Sethi</p>
-      <p class="footer-note">Built with scroll, colour, and curiosity.</p>
+      <p class="footer-note"></p>
     </footer>
 
     <script type="module" src="/src/main.js"></script>
