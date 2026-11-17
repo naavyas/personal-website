@@ -20,6 +20,7 @@
     <header class="site-header">
       <a class="brand" href="#top">Naavya</a>
       <nav class="nav" aria-label="Primary">
+        <a href="#experience">Experience</a>
         <a href="#work">Work</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -57,6 +58,62 @@
               <p class="story-say">to create unique data art.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- ══ 3. Experience — stacked file folders ══════════════════════ -->
+      <section class="chapter experience" id="experience">
+        <header class="exp-head">
+          <h2 class="exp-title">Experience</h2>
+          <p class="exp-sub">Click a folder to open</p>
+        </header>
+
+        <div class="folders">
+          <article class="folder" style="--c: var(--f-ey); --ink: var(--cream); --x: 0.1">
+            <button class="folder-toggle" type="button" aria-expanded="false" aria-controls="exp-ey">
+              <span class="tab"><svg viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 56C13 56 19 51 22 43L33 12C36 4 41 0 50 0H250C259 0 264 4 267 12L278 43C281 51 287 56 300 56Z" /></svg><span class="tab-label">EY</span></span>
+              <span class="band"><span class="meta">Gen AI Intern</span><span class="state" aria-hidden="true"></span></span>
+            </button>
+            <div class="drawer" id="exp-ey" role="region" aria-label="EY">
+              <div><div class="drawer-body"><p>I fine-tuned Llama 3.1 on a sentiment dataset using QLoRA, making its predictions 20% more efficient. Benchmarking prompts and tuning hyperparameters raised its accuracy by 15%. I also built data pipelines with regression, random forests and XGBoost that sped up processing by 30%.</p></div></div>
+            </div>
+          </article>
+          <article class="folder" style="--c: var(--f-ripple); --ink: var(--earth); --x: 0.62">
+            <button class="folder-toggle" type="button" aria-expanded="false" aria-controls="exp-ripple">
+              <span class="tab"><svg viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 56C13 56 19 51 22 43L33 12C36 4 41 0 50 0H250C259 0 264 4 267 12L278 43C281 51 287 56 300 56Z" /></svg><span class="tab-label">Ripple</span></span>
+              <span class="band"><span class="meta">Blockchain Research Intern</span><span class="state" aria-hidden="true"></span></span>
+            </button>
+            <div class="drawer" id="exp-ripple" role="region" aria-label="Ripple">
+              <div><div class="drawer-body"><p>I built Ripple&rsquo;s research data engine, which gathers 900+ blockchain papers automatically and is now used across the company. I wrote XRP Ledger developer docs that were approved for Ripple&rsquo;s official site. I was also Ripple&rsquo;s only representative co-hosting a lending-protocol hackathon for 2,000+ Rare Evo attendees.</p></div></div>
+            </div>
+          </article>
+          <article class="folder" style="--c: var(--f-metaprop); --ink: var(--cream); --x: 0.36">
+            <button class="folder-toggle" type="button" aria-expanded="false" aria-controls="exp-metaprop">
+              <span class="tab"><svg viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 56C13 56 19 51 22 43L33 12C36 4 41 0 50 0H250C259 0 264 4 267 12L278 43C281 51 287 56 300 56Z" /></svg><span class="tab-label">MetaProp</span></span>
+              <span class="band"><span class="meta">AI Engineer &amp; Data Analyst</span><span class="state" aria-hidden="true"></span></span>
+            </button>
+            <div class="drawer" id="exp-metaprop" role="region" aria-label="MetaProp">
+              <div><div class="drawer-body"><p>I wrote Python scripts that scraped and cleaned company data, loading 1,200+ outbound targets straight into the CRM. I connected the Crunchbase API so funding data stayed current in real time. Then I built a React, Flask and Postgres tool that ranks warm leads from email and calendar data.</p></div></div>
+            </div>
+          </article>
+          <article class="folder" style="--c: var(--f-microsoft); --ink: var(--earth); --x: 0.86">
+            <button class="folder-toggle" type="button" aria-expanded="false" aria-controls="exp-microsoft">
+              <span class="tab"><svg viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 56C13 56 19 51 22 43L33 12C36 4 41 0 50 0H250C259 0 264 4 267 12L278 43C281 51 287 56 300 56Z" /></svg><span class="tab-label">Microsoft</span></span>
+              <span class="band"><span class="meta">Development Team Lead</span><span class="state" aria-hidden="true"></span></span>
+            </button>
+            <div class="drawer" id="exp-microsoft" role="region" aria-label="Microsoft">
+              <div><div class="drawer-body"><p>I led a cross-functional team building a corporate identity protocol with Microsoft, presented at the Ethical Tech Summit. My product and technical plans won QuickNode funding and a spot in their accelerator. When sponsors pulled in different directions, I reworked the plan and ran a hackathon that cut our timeline in half.</p></div></div>
+            </div>
+          </article>
+          <article class="folder" style="--c: var(--f-kalshi); --ink: var(--cream); --x: 0.24">
+            <button class="folder-toggle" type="button" aria-expanded="false" aria-controls="exp-kalshi">
+              <span class="tab"><svg viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 56C13 56 19 51 22 43L33 12C36 4 41 0 50 0H250C259 0 264 4 267 12L278 43C281 51 287 56 300 56Z" /></svg><span class="tab-label">Kalshi</span></span>
+              <span class="band"><span class="meta">Kalshi News</span><span class="state" aria-hidden="true"></span></span>
+            </button>
+            <div class="drawer" id="exp-kalshi" role="region" aria-label="Kalshi">
+              <div><div class="drawer-body"><p>I came up with and led Kalshi News, a live feed that alerts people when a story affects the bets they have open. A real-time webhook pipeline matches each new article against users&rsquo; live positions the moment it&rsquo;s published. Push notifications bring people back into the app, aiming for 25% more daily engagement.</p></div></div>
+            </div>
+          </article>
         </div>
       </section>
 

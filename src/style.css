@@ -20,6 +20,11 @@
   --dot: #c9cdce;
   --dot-dark: #8b9194;
   --mocha: #8d6e63;
+  --f-ey: #453028;
+  --f-ripple: #d7ccc8;
+  --f-metaprop: #8d6e63;
+  --f-microsoft: #efe8e2;
+  --f-kalshi: #241914;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --header-h: 4.25rem;
   --gutter: clamp(1.25rem, 4vw, 3rem);
@@ -321,6 +326,210 @@ body.is-dark .brand {
   line-height: 1.2;
   text-wrap: balance;
   color: var(--cream);
+}
+
+/* ═══ 3. Experience — stacked file folders ═══════════════════════════ */
+.experience {
+  background: var(--paper);
+  padding-top: clamp(5rem, 14vh, 9rem);
+  overflow: hidden;
+}
+
+/* fine linen weave over the whole section, folders included */
+.experience::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(40, 25, 20, 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(40, 25, 20, 0.03) 0 1px, transparent 1px 4px);
+  mix-blend-mode: multiply;
+}
+
+.exp-head {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto clamp(4rem, 11vh, 7rem);
+  padding: 0 var(--gutter);
+  display: grid;
+}
+
+.exp-title {
+  margin: 0;
+  font-weight: 300;
+  font-size: clamp(3.2rem, 10vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--earth);
+}
+
+.exp-sub {
+  justify-self: end;
+  margin: 0.9rem 0.2rem 0 0;
+  font-size: clamp(0.72rem, 1.1vw, 0.85rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mocha);
+}
+
+.folders {
+  display: grid;
+}
+
+.folder {
+  --tab-w: clamp(170px, 30vw, 360px);
+  --tab-h: clamp(46px, 5.5vw, 62px);
+  position: relative;
+  color: var(--ink);
+}
+
+.folder + .folder {
+  margin-top: calc(-1 * var(--tab-h));
+}
+
+.folder-toggle {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.folder-toggle:focus-visible {
+  outline: none;
+}
+
+.tab {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--tab-w);
+  height: var(--tab-h);
+  margin-left: calc((100% - var(--tab-w)) * var(--x));
+}
+
+.tab svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: calc(100% + 1px);
+  overflow: visible;
+}
+
+.tab svg path {
+  fill: var(--c);
+}
+
+.tab-label {
+  position: relative;
+  padding-top: 0.15em;
+  font-size: clamp(0.82rem, 1.4vw, 1.05rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.folder-toggle:hover .tab-label,
+.folder-toggle:focus-visible .tab-label,
+.folder.open .tab-label {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.4em;
+}
+
+.band {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  min-height: clamp(104px, 12vw, 132px);
+  padding: clamp(1.1rem, 2.2vw, 1.6rem) var(--gutter) 0;
+  background: var(--c);
+}
+
+.folder:last-child .band {
+  min-height: clamp(150px, 20vw, 240px);
+}
+
+.folder.open .band {
+  min-height: 0;
+  padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.meta,
+.state {
+  font-size: clamp(0.66rem, 0.9vw, 0.74rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.state {
+  flex: none;
+  transition: opacity 0.3s var(--ease);
+}
+
+.state::after {
+  content: "Open";
+}
+
+.folder.open .state::after {
+  content: "Close";
+}
+
+.folder-toggle:hover .state {
+  opacity: 1;
+}
+
+.drawer {
+  display: grid;
+  grid-template-rows: 0fr;
+  background: var(--c);
+  transition: grid-template-rows 0.6s var(--ease);
+}
+
+.folder.open .drawer {
+  grid-template-rows: 1fr;
+}
+
+.drawer > div {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.drawer-body {
+  padding: 0 var(--gutter) calc(var(--tab-h) + clamp(2rem, 5vw, 3.5rem));
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.35s var(--ease),
+    transform 0.5s var(--ease);
+}
+
+.folder.open .drawer-body {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.15s;
+}
+
+.drawer-body p {
+  margin: 0;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-weight: 300;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+  color: inherit;
+}
+
+@media (max-width: 640px) {
+  .folder {
+    --tab-w: 56vw;
+  }
 }
 
 /* ═══ Projects ════════════════════════════════════════════════════════ */
@@ -762,7 +971,9 @@ body.is-dark .brand {
     position: relative;
   }
 
-  .gallery-card {
+  .gallery-card,
+  .drawer,
+  .drawer-body {
     transition: none;
   }
 }

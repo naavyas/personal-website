@@ -129,11 +129,15 @@ function initTypewriter() {
     $("#story")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
   });
 
-  const onScroll = () =>
-    document.body.classList.toggle(
-      "is-dark",
-      cover.getBoundingClientRect().bottom < 60
-    );
+  // Header text goes light over the dark sections, dark over the light ones.
+  const lightSections = $$(".cover, .experience");
+  const onScroll = () => {
+    const overLight = lightSections.some((el) => {
+      const r = el.getBoundingClientRect();
+      return r.top < 40 && r.bottom > 40;
+    });
+    document.body.classList.toggle("is-dark", !overLight);
+  };
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 }
@@ -443,6 +447,26 @@ function initCanvases() {
   requestAnimationFrame(frame);
 }
 
+/* ══ 3. Experience folders — one open at a time ═══════════════════════ */
+
+function initFolders() {
+  const folders = $$(".folder");
+  folders.forEach((folder) => {
+    const btn = $(".folder-toggle", folder);
+    btn?.addEventListener("click", () => {
+      const willOpen = !folder.classList.contains("open");
+      folders.forEach((f) => {
+        f.classList.remove("open");
+        $(".folder-toggle", f)?.setAttribute("aria-expanded", "false");
+      });
+      if (willOpen) {
+        folder.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
+}
+
 /* ══ Gallery stack — click / swipe / arrows to rotate ═════════════════ */
 
 function initGalleryStack() {
@@ -581,6 +605,7 @@ function initVideo() {
 initReveals();
 initTypewriter();
 initCanvases();
+initFolders();
 initGalleryStack();
 initVideo();
 
