@@ -6,9 +6,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 const GITHUB_REPO = "https://github.com/naavyas";
 
-const EARTH = "#5a4339";
-const COCOA = "#a1887f";
-
 const reduceMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)"
 ).matches;
@@ -48,286 +45,402 @@ function initReveals() {
   targets.forEach((el) => io.observe(el));
 }
 
-/* ══ 1. Hero — zoom into the middle "a" ═══════════════════════════════ */
+/* ══ Shared canvas helpers ════════════════════════════════════════════ */
 
-function setZoomOrigin() {
-  const zoom = $(".intro-zoom");
-  const accent = $("#zoom-a");
-  if (!zoom || !accent) return;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeInOut = (t) =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  const z = zoom.getBoundingClientRect();
-  const a = accent.getBoundingClientRect();
-  if (!z.width || !z.height) return;
-
-  const ox = ((a.left + a.width / 2 - z.left) / z.width) * 100;
-  const oy = ((a.top + a.height / 2 - z.top) / z.height) * 100;
-  zoom.style.transformOrigin = `${ox}% ${oy}%`;
+function rng(seed) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
-function zoomScale() {
-  const accent = $("#zoom-a");
-  if (!accent) return 40;
-  const a = accent.getBoundingClientRect();
-  const glyph = Math.min(a.width, a.height) || 40;
-  const viewport = Math.max(
-    document.documentElement.clientWidth,
-    window.innerHeight
-  );
-  return gsap.utils.clamp(24, 80, (viewport / glyph) * 1.7);
+function sizeCanvas(cv, ctx) {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = cv.clientWidth;
+  const h = cv.clientHeight;
+  cv.width = Math.round(w * dpr);
+  cv.height = Math.round(h * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return [w, h];
 }
 
-function initHero() {
-  const section = $(".chapter-intro");
-  const zoom = $(".intro-zoom");
-  const accent = $("#zoom-a");
-  const backdrop = $(".stage-backdrop");
-  const eyebrow = $(".eyebrow");
-  if (!section || !zoom || !accent || !backdrop) return;
+const cssVar = (name) =>
+  getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
-  const chars = $$(".intro-line .char").filter((c) => c !== accent);
-  const words = $$(".intro-line .word:not(.name)");
+/* ══ 1. Cover — "Hi, I am" typewriter ═════════════════════════════════ */
 
-  setZoomOrigin();
-  window.addEventListener("resize", setZoomOrigin);
+function initTypewriter() {
+  const cover = $("#cover");
+  const typed = $(".hello-small .typed");
+  const hello = $("#hello");
+  if (!cover || !typed || !hello) return;
 
-  if (reduceMotion) {
-    ScrollTrigger.create({
-      trigger: section,
-      start: "bottom 85%",
-      onEnter: () => {
-        document.body.classList.add("is-dark");
-        gsap.to(backdrop, { opacity: 0, duration: 0.5, ease: "none" });
-      },
-      onLeaveBack: () => {
-        document.body.classList.remove("is-dark");
-        gsap.to(backdrop, { opacity: 1, duration: 0.5, ease: "none" });
-      },
-    });
-    return;
+  const txt = $(".txt", typed);
+  const caret = document.createElement("span");
+  caret.className = "caret";
+  const TEXT = "Hi, I am";
+  let run = 0;
+
+  async function play() {
+    const id = ++run;
+    txt.textContent = "";
+    typed.append(caret);
+    if (reduceMotion) {
+      txt.textContent = TEXT;
+      return;
+    }
+    await sleep(450);
+    for (const ch of TEXT) {
+      if (id !== run) return;
+      txt.textContent += ch;
+      await sleep(85 + Math.random() * 80);
+    }
   }
 
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: section,
-      start: "top top",
-      end: "+=320%",
-      scrub: 0.6,
-      pin: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onRefresh: setZoomOrigin,
-      onUpdate: (self) =>
-        document.body.classList.toggle("is-dark", self.progress > 0.7),
-    },
+  // Retype every time the cover scrolls back into view.
+  let leftCover = false;
+  new IntersectionObserver(
+    (entries) =>
+      entries.forEach((e) => {
+        if (e.intersectionRatio < 0.25) leftCover = true;
+        else if (e.intersectionRatio >= 0.6 && leftCover) {
+          leftCover = false;
+          play();
+        }
+      }),
+    { threshold: [0, 0.25, 0.6] }
+  ).observe(cover);
+
+  hello.addEventListener("click", play);
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(play);
+
+  const prompt = $(".scroll-prompt a");
+  prompt?.addEventListener("click", (e) => {
+    e.preventDefault();
+    $("#story")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
   });
 
-  tl.to(eyebrow, { opacity: 0, duration: 0.12, ease: "none" }, 0)
-    .to(zoom, { scale: zoomScale, duration: 1.3, ease: "none" }, 0.05)
-    .to(words, { opacity: 0, duration: 0.16, ease: "none" }, 0.06)
-    .to(chars, { opacity: 0, duration: 0.24, stagger: 0.02, ease: "none" }, 0.1)
-    .to(accent, { color: COCOA, duration: 0.22, ease: "none" }, 0.2)
-    .to(accent, { color: EARTH, duration: 0.18, ease: "power2.in" }, 0.68)
-    .to(backdrop, { opacity: 0, duration: 0.18, ease: "power2.in" }, 0.68)
-    .to(zoom, { opacity: 0, duration: 0.15, ease: "none" }, 0.95)
-    .to({}, { duration: 0.45 });
-}
-
-/* ══ 2 + 3. The thread — crayon scribble → node/edge network ═══════════ */
-
-const SCRIBBLE = [
-  [90, 470], [150, 330], [205, 205], [268, 118], [330, 150], [352, 268],
-  [326, 392], [288, 486], [300, 540], [392, 506], [470, 420], [534, 308],
-  [578, 196], [634, 120], [706, 148], [742, 262], [722, 382], [678, 470],
-  [706, 528], [800, 494], [870, 412], [912, 306], [906, 214],
-];
-
-const NODES = [
-  [110, 452], [232, 336], [196, 178], [352, 120], [430, 268], [318, 420],
-  [412, 528], [556, 452], [520, 296], [648, 166], [762, 124], [812, 282],
-  [700, 398], [886, 438],
-];
-
-const EXTRA_EDGES = [
-  [0, 5], [1, 5], [2, 4], [3, 8], [4, 8], [5, 7],
-  [7, 12], [8, 12], [9, 11], [10, 12], [11, 13],
-];
-
-const SAMPLES = 200;
-
-function catmullRom(pts, seg = 18) {
-  const p = [pts[0], ...pts, pts[pts.length - 1]];
-  const out = [];
-  for (let i = 1; i < p.length - 2; i++) {
-    const [p0, p1, p2, p3] = [p[i - 1], p[i], p[i + 1], p[i + 2]];
-    for (let s = 0; s < seg; s++) {
-      const t = s / seg;
-      const t2 = t * t;
-      const t3 = t2 * t;
-      out.push([
-        0.5 *
-          (2 * p1[0] +
-            (-p0[0] + p2[0]) * t +
-            (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
-            (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
-        0.5 *
-          (2 * p1[1] +
-            (-p0[1] + p2[1]) * t +
-            (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
-            (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3),
-      ]);
-    }
-  }
-  out.push(pts[pts.length - 1]);
-  return out;
-}
-
-function resample(pts, n) {
-  const dist = [0];
-  for (let i = 1; i < pts.length; i++) {
-    dist.push(
-      dist[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])
+  const onScroll = () =>
+    document.body.classList.toggle(
+      "is-dark",
+      cover.getBoundingClientRect().bottom < 60
     );
-  }
-  const total = dist[dist.length - 1] || 1;
-  const out = [];
-  let j = 0;
-  for (let i = 0; i < n; i++) {
-    const target = (i / (n - 1)) * total;
-    while (j < dist.length - 2 && dist[j + 1] < target) j++;
-    const span = dist[j + 1] - dist[j] || 1;
-    const t = (target - dist[j]) / span;
-    out.push([
-      pts[j][0] + (pts[j + 1][0] - pts[j][0]) * t,
-      pts[j][1] + (pts[j + 1][1] - pts[j][1]) * t,
-    ]);
-  }
-  return out;
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
 }
 
-function initThread() {
-  const section = $(".chapter-thread");
-  const svg = $(".thread-svg");
-  const line = $(".thread-line");
-  const edgeGroup = $(".thread-edges");
-  const nodeGroup = $(".thread-nodes");
-  const copies = $$(".thread-copy");
-  const displace = $("#crayon feDisplacementMap");
-  if (!section || !svg || !line) return;
+/* ══ 1. Cover — cursor-reactive dot grid ══════════════════════════════ */
 
-  const NS = "http://www.w3.org/2000/svg";
-  const from = resample(catmullRom(SCRIBBLE), SAMPLES);
-  const walk = resample(NODES, SAMPLES);
+function createDotField() {
+  const cover = $("#cover");
+  const canvas = $(".cover-field");
+  if (!cover || !canvas) return null;
 
-  const setPoints = (t) => {
-    let out = "";
-    for (let i = 0; i < SAMPLES; i++) {
-      out += `${(from[i][0] + (walk[i][0] - from[i][0]) * t).toFixed(1)},${(
-        from[i][1] +
-        (walk[i][1] - from[i][1]) * t
-      ).toFixed(1)} `;
+  const ctx = canvas.getContext("2d");
+  const DOT = cssVar("--dot") || "#c9cdce";
+  const DOT_DARK = cssVar("--dot-dark") || "#8b9194";
+  const GAP = 14;
+  const BASE_R = 1.05;
+  const REACH = 150;
+  let W = 0;
+  let H = 0;
+  let grid = []; // [homeX, homeY, offX, offY, r]
+  let visible = true;
+
+  let px = -9999, py = -9999, tx = -9999, ty = -9999;
+  let presence = 0, targetPresence = 0;
+
+  cover.addEventListener(
+    "pointermove",
+    (e) => {
+      const rc = cover.getBoundingClientRect();
+      tx = e.clientX - rc.left;
+      ty = e.clientY - rc.top;
+      if (px < -999) {
+        px = tx;
+        py = ty;
+      }
+      targetPresence = 1;
+    },
+    { passive: true }
+  );
+  cover.addEventListener("pointerleave", () => (targetPresence = 0));
+  new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(cover);
+
+  function resize() {
+    [W, H] = sizeCanvas(canvas, ctx);
+    grid = [];
+    const cols = Math.ceil(W / GAP) + 1;
+    const rows = Math.ceil(H / GAP) + 1;
+    const ox = (W - (cols - 1) * GAP) / 2;
+    const oy = (H - (rows - 1) * GAP) / 2;
+    for (let j = 0; j < rows; j++)
+      for (let i = 0; i < cols; i++)
+        grid.push([ox + i * GAP, oy + j * GAP, 0, 0, BASE_R]);
+  }
+
+  function draw(t) {
+    if (!visible) return;
+    px += (tx - px) * 0.18;
+    py += (ty - py) * 0.18;
+    presence += (targetPresence - presence) * 0.08;
+
+    ctx.clearRect(0, 0, W, H);
+    const light = new Path2D();
+    const dark = new Path2D();
+    const R2 = REACH * REACH;
+
+    for (const d of grid) {
+      const hx = d[0];
+      const hy = d[1];
+      let goX = 0, goY = 0, goR = BASE_R;
+
+      if (presence > 0.01) {
+        const dx = hx - px;
+        const dy = hy - py;
+        const dd = dx * dx + dy * dy;
+        if (dd < R2) {
+          const dist = Math.sqrt(dd) || 1;
+          const f = 1 - dist / REACH;
+          const near = f * f * presence;
+          goX = (dx / dist) * near * 22;
+          goY = (dy / dist) * near * 22;
+          goR = BASE_R + near * 2.6;
+        }
+      }
+      if (!reduceMotion) {
+        goX += Math.sin(t * 0.6 + hy * 0.02) * 0.6;
+        goY += Math.cos(t * 0.5 + hx * 0.02) * 0.6;
+      }
+      d[2] += (goX - d[2]) * 0.14;
+      d[3] += (goY - d[3]) * 0.14;
+      d[4] += (goR - d[4]) * 0.14;
+
+      const x = hx + d[2];
+      const y = hy + d[3];
+      const r = d[4];
+      const p = r > BASE_R + 1.1 ? dark : light;
+      p.moveTo(x + r, y);
+      p.arc(x, y, r, 0, Math.PI * 2);
     }
-    line.setAttribute("points", out.trim());
+    ctx.fillStyle = DOT;
+    ctx.fill(light);
+    ctx.fillStyle = DOT_DARK;
+    ctx.fill(dark);
+  }
+
+  return { resize, draw };
+}
+
+/* ══ 2. Story — dots become bars, lines, then a network ═══════════════ */
+
+function createStory() {
+  const story = $("#story");
+  const canvas = $(".story-dots");
+  if (!story || !canvas) return null;
+
+  const ctx = canvas.getContext("2d");
+  const copyEls = $$("[data-copy]", story);
+  const C = { cream: "#f8f5f2", sand: "#d7ccc8", taupe: "#bcaaa4", rose: "#c9a99a" };
+  let W = 0;
+  let H = 0;
+  let visible = false;
+  new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(story);
+
+  const N = 48;
+  const R = rng(7);
+  const scatter = Array.from({ length: N }, () => [0.04 + R() * 0.92, 0.04 + R() * 0.92]);
+  const scatterR = Array.from({ length: N }, () => 2 + R() * 3.5);
+
+  const bars = [];
+  [6, 9, 7, 11, 6, 9].forEach((n, col) => {
+    for (let k = 0; k < n; k++) bars.push([0.12 + col * 0.152, 0.95 - k * 0.078]);
+  });
+
+  const line = Array.from({ length: N }, (_, i) => {
+    const u = i / (N - 1);
+    return [
+      0.04 + u * 0.92,
+      0.6 - Math.sin(u * Math.PI * 1.7 + 0.2) * 0.22 - u * 0.25 + (R() - 0.5) * 0.03,
+    ];
+  });
+
+  const centres = [[0.2, 0.42], [0.46, 0.8], [0.8, 0.58], [0.6, 0.2]];
+  const cluster = Array.from({ length: N }, (_, i) => i % 4);
+  const net = Array.from({ length: N }, (_, i) => {
+    const [cx, cy] = centres[cluster[i]];
+    if (i < 4) return [cx, cy];
+    const a = R() * Math.PI * 2;
+    const d = 0.05 + Math.sqrt(R()) * 0.13;
+    return [cx + Math.cos(a) * d, cy + Math.sin(a) * d * 1.2];
+  });
+  const netEdges = [];
+  for (let i = 0; i < N; i++) {
+    const near = [];
+    for (let j = 0; j < N; j++) {
+      if (i === j || cluster[i] !== cluster[j]) continue;
+      near.push([Math.hypot(net[i][0] - net[j][0], net[i][1] - net[j][1]), j]);
+    }
+    near
+      .sort((a, b) => a[0] - b[0])
+      .slice(0, 2)
+      .forEach(([, j]) => netEdges.push([i, j]));
+    if (i >= 4) netEdges.push([i, cluster[i]]);
+  }
+  [[0, 3], [3, 2], [2, 1], [1, 0], [0, 2], [5, 14], [10, 23]].forEach((e) =>
+    netEdges.push(e)
+  );
+  const degree = new Array(N).fill(0);
+  netEdges.forEach(([a, b]) => {
+    degree[a]++;
+    degree[b]++;
+  });
+  const netR = degree.map((d) => 2.5 + Math.min(9, d * 0.7));
+  const clusterTint = [C.cream, C.rose, C.sand, C.taupe];
+
+  const layouts = [scatter, bars, line, net];
+  const radii = [scatterR, new Array(N).fill(5), new Array(N).fill(3.5), netR];
+  // scroll progress → stage 0..3, with holds between morphs
+  const keys = [[0, 0], [0.1, 0], [0.28, 1], [0.38, 1], [0.56, 2], [0.66, 2], [0.86, 3], [1, 3]];
+
+  const stageAt = (p) => {
+    for (let i = 0; i < keys.length - 1; i++) {
+      const [p0, s0] = keys[i];
+      const [p1, s1] = keys[i + 1];
+      if (p <= p1) return s0 + (s1 - s0) * easeInOut(clamp((p - p0) / (p1 - p0), 0, 1));
+    }
+    return 3;
   };
 
-  EXTRA_EDGES.forEach(([a, b]) => {
-    const el = document.createElementNS(NS, "line");
-    el.setAttribute("x1", NODES[a][0]);
-    el.setAttribute("y1", NODES[a][1]);
-    el.setAttribute("x2", NODES[b][0]);
-    el.setAttribute("y2", NODES[b][1]);
-    edgeGroup.appendChild(el);
-  });
+  const progress = () => {
+    if (reduceMotion) return 1;
+    const rc = story.getBoundingClientRect();
+    return clamp(-rc.top / (rc.height - window.innerHeight), 0, 1);
+  };
 
-  const nodeEls = NODES.map(([x, y]) => {
-    const el = document.createElementNS(NS, "circle");
-    el.setAttribute("cx", x);
-    el.setAttribute("cy", y);
-    el.setAttribute("r", 9);
-    nodeGroup.appendChild(el);
-    return el;
-  });
+  let lastCopy = -1;
 
-  line.setAttribute("pathLength", "1");
-  line.style.strokeDasharray = "1 1";
+  function draw(t, force = false) {
+    if (!visible && !force) return;
+    const s = stageAt(progress());
+    const a = Math.min(2, Math.floor(s));
+    const f = s - a;
+    const w = (i) => Math.max(0, 1 - Math.abs(s - i));
+
+    const copy = s < 1.5 ? 0 : 1;
+    if (copy !== lastCopy) {
+      copyEls.forEach((el, i) => el.classList.toggle("on", i === copy));
+      lastCopy = copy;
+    }
+
+    const bw = Math.min(W * 0.84, 980);
+    const bh = Math.min(H * 0.5, 520);
+    const bx = (W - bw) / 2;
+    const by = H * 0.22;
+    const P = (pt) => [bx + pt[0] * bw, by + pt[1] * bh];
+
+    const pos = [];
+    const rad = [];
+    const wob = reduceMotion ? 0 : w(0);
+    for (let i = 0; i < N; i++) {
+      const p0 = P(layouts[a][i]);
+      const p1 = P(layouts[a + 1][i]);
+      pos.push([
+        lerp(p0[0], p1[0], f) + Math.sin(t * 0.9 + i) * 6 * wob,
+        lerp(p0[1], p1[1], f) + Math.cos(t * 0.7 + i * 1.3) * 6 * wob,
+      ]);
+      rad.push(lerp(radii[a][i], radii[a + 1][i], f));
+    }
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineCap = "round";
+
+    if (w(1) > 0) {
+      ctx.globalAlpha = w(1) * 0.5;
+      ctx.strokeStyle = C.sand;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(bx + bw * 0.06, by + bh * 0.98);
+      ctx.lineTo(bx + bw * 0.94, by + bh * 0.98);
+      ctx.stroke();
+    }
+    if (w(2) > 0) {
+      ctx.globalAlpha = w(2) * 0.7;
+      ctx.strokeStyle = C.sand;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      pos.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+      ctx.stroke();
+    }
+    if (w(3) > 0) {
+      ctx.globalAlpha = w(3) * 0.4;
+      ctx.strokeStyle = C.taupe;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      netEdges.forEach(([i, j]) => {
+        ctx.moveTo(pos[i][0], pos[i][1]);
+        ctx.lineTo(pos[j][0], pos[j][1]);
+      });
+      ctx.stroke();
+    }
+    for (let i = 0; i < N; i++) {
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = C.cream;
+      ctx.beginPath();
+      ctx.arc(pos[i][0], pos[i][1], rad[i], 0, Math.PI * 2);
+      ctx.fill();
+      if (w(3) > 0) {
+        ctx.globalAlpha = w(3);
+        ctx.fillStyle = clusterTint[cluster[i]];
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function resize() {
+    [W, H] = sizeCanvas(canvas, ctx);
+    draw(0, true);
+  }
+
+  return { resize, draw };
+}
+
+function initCanvases() {
+  const field = createDotField();
+  const story = createStory();
+  const resize = () => {
+    field?.resize();
+    story?.resize();
+  };
+  window.addEventListener("resize", resize);
+  resize();
 
   if (reduceMotion) {
-    setPoints(1);
-    line.style.strokeDashoffset = "0";
-    line.style.strokeWidth = "3";
-    if (displace) displace.setAttribute("scale", "0");
-    gsap.set(edgeGroup.children, { opacity: 0.55 });
-    gsap.set(nodeEls, { opacity: 1 });
+    field?.draw(0);
+    window.addEventListener("scroll", () => story?.draw(0, true), { passive: true });
     return;
   }
 
-  setPoints(0);
-  line.style.strokeDashoffset = "1";
-
-  const state = { draw: 1, morph: 0 };
-
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: section,
-      start: "top top",
-      end: "bottom bottom",
-      scrub: 0.5,
-    },
-  });
-
-  tl
-    .to(
-      state,
-      {
-        draw: 0,
-        duration: 0.3,
-        ease: "none",
-        onUpdate: () => (line.style.strokeDashoffset = String(state.draw)),
-      },
-      0
-    )
-    .fromTo(
-      copies[0],
-      { opacity: 0, y: 26 },
-      { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" },
-      0.1
-    )
-    .to(copies[0], { opacity: 0, y: -22, duration: 0.12, ease: "none" }, 0.36)
-    .to(
-      state,
-      {
-        morph: 1,
-        duration: 0.36,
-        ease: "power1.inOut",
-        onUpdate: () => setPoints(state.morph),
-      },
-      0.38
-    )
-    .to(line, { strokeWidth: 2.5, duration: 0.36, ease: "none" }, 0.38)
-    .to(
-      displace,
-      { attr: { scale: 0 }, duration: 0.28, ease: "none" },
-      0.38
-    )
-    .fromTo(
-      copies[1],
-      { opacity: 0, y: 26 },
-      { opacity: 1, y: 0, duration: 0.16, ease: "power2.out" },
-      0.6
-    )
-    .to(edgeGroup.children, { opacity: 0.55, duration: 0.18, ease: "none" }, 0.66)
-    .fromTo(
-      nodeEls,
-      { opacity: 0, scale: 0.2 },
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 0.16,
-        stagger: 0.012,
-        ease: "back.out(2)",
-      },
-      0.7
-    )
-    .to({}, { duration: 0.12 });
+  const t0 = performance.now();
+  const frame = (now) => {
+    const t = (now - t0) / 1000;
+    if (!document.hidden) {
+      field?.draw(t);
+      story?.draw(t);
+    }
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
 }
 
 /* ══ Gallery stack — click / swipe / arrows to rotate ═════════════════ */
@@ -466,19 +579,10 @@ function initVideo() {
 /* ── Boot ───────────────────────────────────────────────────────────── */
 
 initReveals();
-initHero();
-initThread();
+initTypewriter();
+initCanvases();
 initGalleryStack();
 initVideo();
 
-window.addEventListener("load", () => {
-  setZoomOrigin();
-  ScrollTrigger.refresh();
-});
-
-if (document.fonts?.ready) {
-  document.fonts.ready.then(() => {
-    setZoomOrigin();
-    ScrollTrigger.refresh();
-  });
-}
+window.addEventListener("load", () => ScrollTrigger.refresh());
+document.fonts?.ready?.then(() => ScrollTrigger.refresh());
