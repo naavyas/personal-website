@@ -177,70 +177,59 @@
           </div>
         </div>
 
-        <!-- Filmstrip — the network graphs drift past; click one to view it -->
+        <!-- Graph index — one large graph beside the list of all 13 -->
         <div class="beat beat-gallery" id="beat-graphs">
-          <div class="beat-head reveal">
-            <p class="beat-copy look-below">Click through the images →</p>
-          </div>
+          <div class="graph-index">
+            <figure class="graph-stage">
+              <div class="graph-frame" aria-live="polite">
+              <img src="art/web/circular-layouts.jpg" alt="Circular Layouts network graph" decoding="async" draggable="false" class="on" />
+              <img src="art/web/force-atlas-1.jpg" alt="Force Atlas 1 network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/force-atlas-2.jpg" alt="Force Atlas 2 network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/force-atlas-3.jpg" alt="Force Atlas 3 network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/force-atlas-4.jpg" alt="Force Atlas 4 network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/paper-spinner1.jpg" alt="Paper Spinner 1 network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/paper-spinner2.jpg" alt="Paper Spinner 2 network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/radial-1.jpg" alt="Radial 1 network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/radial-2.jpg" alt="Radial 2 network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/rectangular-layouts.jpg" alt="Rectangular Layouts network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/label-propagation.jpg" alt="Label Propagation network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/louvain-algorithm.jpg" alt="Louvain Algorithm network graph" decoding="async" draggable="false" loading="lazy" />
+              <img src="art/web/statistical-inference.jpg" alt="Statistical Inference network graph" decoding="async" draggable="false" loading="lazy" />
+              </div>
+              <figcaption class="graph-cap">
+                <span class="graph-name">Circular Layouts</span>
+                <span class="graph-group-name">Layouts</span>
+              </figcaption>
+            </figure>
 
-          <div class="filmstrip" id="filmstrip" aria-label="Network graphs">
-            <div class="film-track">
-              <button type="button" class="film-tile" data-index="0" aria-label="Open Circular Layouts">
-                <span class="film-card"><img src="art/web/circular-layouts.jpg" alt="Circular Layouts network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Circular Layouts</span>
-              </button>
-              <button type="button" class="film-tile" data-index="1" aria-label="Open Force Atlas 1">
-                <span class="film-card"><img src="art/web/force-atlas-1.jpg" alt="Force Atlas 1 network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Force Atlas 1</span>
-              </button>
-              <button type="button" class="film-tile" data-index="2" aria-label="Open Force Atlas 2">
-                <span class="film-card"><img src="art/web/force-atlas-2.jpg" alt="Force Atlas 2 network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Force Atlas 2</span>
-              </button>
-              <button type="button" class="film-tile" data-index="3" aria-label="Open Force Atlas 3">
-                <span class="film-card"><img src="art/web/force-atlas-3.jpg" alt="Force Atlas 3 network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Force Atlas 3</span>
-              </button>
-              <button type="button" class="film-tile" data-index="4" aria-label="Open Force Atlas 4">
-                <span class="film-card"><img src="art/web/force-atlas-4.jpg" alt="Force Atlas 4 network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Force Atlas 4</span>
-              </button>
-              <button type="button" class="film-tile" data-index="5" aria-label="Open Label Propagation">
-                <span class="film-card"><img src="art/web/label-propagation.jpg" alt="Label Propagation network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Label Propagation</span>
-              </button>
-              <button type="button" class="film-tile" data-index="6" aria-label="Open Louvain Algorithm">
-                <span class="film-card"><img src="art/web/louvain-algorithm.jpg" alt="Louvain Algorithm network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Louvain Algorithm</span>
-              </button>
-              <button type="button" class="film-tile" data-index="7" aria-label="Open Paper Spinner 1">
-                <span class="film-card"><img src="art/web/paper-spinner1.jpg" alt="Paper Spinner 1 network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Paper Spinner 1</span>
-              </button>
-              <button type="button" class="film-tile" data-index="8" aria-label="Open Paper Spinner 2">
-                <span class="film-card"><img src="art/web/paper-spinner2.jpg" alt="Paper Spinner 2 network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Paper Spinner 2</span>
-              </button>
-              <button type="button" class="film-tile" data-index="9" aria-label="Open Radial 1">
-                <span class="film-card"><img src="art/web/radial-1.jpg" alt="Radial 1 network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Radial 1</span>
-              </button>
-              <button type="button" class="film-tile" data-index="10" aria-label="Open Radial 2">
-                <span class="film-card"><img src="art/web/radial-2.jpg" alt="Radial 2 network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Radial 2</span>
-              </button>
-              <button type="button" class="film-tile" data-index="11" aria-label="Open Rectangular Layouts">
-                <span class="film-card"><img src="art/web/rectangular-layouts.jpg" alt="Rectangular Layouts network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Rectangular Layouts</span>
-              </button>
-              <button type="button" class="film-tile" data-index="12" aria-label="Open Statistical Inference">
-                <span class="film-card"><img src="art/web/statistical-inference.jpg" alt="Statistical Inference network graph" loading="lazy" decoding="async" draggable="false" /></span>
-                <span class="film-cap">Statistical Inference</span>
-              </button>
+            <nav class="graph-list" aria-label="Network graphs">
+              <p class="graph-hint">Click a name to see each graph</p>
+            <div class="graph-group">
+              <p class="graph-group-label">Layouts</p>
+              <ul>
+                <li><button type="button" class="graph-item on" data-index="0" aria-pressed="true"><span class="graph-n">01</span>Circular Layouts</button></li>
+                <li><button type="button" class="graph-item" data-index="1" aria-pressed="false"><span class="graph-n">02</span>Force Atlas 1</button></li>
+                <li><button type="button" class="graph-item" data-index="2" aria-pressed="false"><span class="graph-n">03</span>Force Atlas 2</button></li>
+                <li><button type="button" class="graph-item" data-index="3" aria-pressed="false"><span class="graph-n">04</span>Force Atlas 3</button></li>
+                <li><button type="button" class="graph-item" data-index="4" aria-pressed="false"><span class="graph-n">05</span>Force Atlas 4</button></li>
+                <li><button type="button" class="graph-item" data-index="5" aria-pressed="false"><span class="graph-n">06</span>Paper Spinner 1</button></li>
+                <li><button type="button" class="graph-item" data-index="6" aria-pressed="false"><span class="graph-n">07</span>Paper Spinner 2</button></li>
+                <li><button type="button" class="graph-item" data-index="7" aria-pressed="false"><span class="graph-n">08</span>Radial 1</button></li>
+                <li><button type="button" class="graph-item" data-index="8" aria-pressed="false"><span class="graph-n">09</span>Radial 2</button></li>
+                <li><button type="button" class="graph-item" data-index="9" aria-pressed="false"><span class="graph-n">10</span>Rectangular Layouts</button></li>
+              </ul>
             </div>
+            <div class="graph-group">
+              <p class="graph-group-label">Community detection</p>
+              <ul>
+                <li><button type="button" class="graph-item" data-index="10" aria-pressed="false"><span class="graph-n">11</span>Label Propagation</button></li>
+                <li><button type="button" class="graph-item" data-index="11" aria-pressed="false"><span class="graph-n">12</span>Louvain Algorithm</button></li>
+                <li><button type="button" class="graph-item" data-index="12" aria-pressed="false"><span class="graph-n">13</span>Statistical Inference</button></li>
+              </ul>
+            </div>
+            </nav>
           </div>
         </div>
-
       </section>
 
       <!-- Project 2 - Generative Runs -->
@@ -328,18 +317,6 @@
       <p>© <span id="year"></span> Naavya Sethi</p>
       <p class="footer-note"></p>
     </footer>
-
-    <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Graph viewer">
-      <button class="viewer-btn viewer-close" type="button" aria-label="Close">✕</button>
-      <div class="film-card viewer-card"><img alt="" /></div>
-      <div class="viewer-bar">
-        <p class="viewer-name"></p>
-        <div class="viewer-arrows">
-          <button class="viewer-btn" type="button" data-step="-1" aria-label="Previous graph">←</button>
-          <button class="viewer-btn" type="button" data-step="1" aria-label="Next graph">→</button>
-        </div>
-      </div>
-    </div>
 
     <script type="module" src="/src/main.js"></script>
   </body>

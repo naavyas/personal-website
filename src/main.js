@@ -130,7 +130,7 @@ function initTypewriter() {
   });
 
   // Header text goes light over the dark sections, dark over the light ones.
-  const lightSections = $$(".cover, .experience");
+  const lightSections = $$(".cover, .experience, .beat-gallery");
   const onScroll = () => {
     const overLight = lightSections.some((el) => {
       const r = el.getBoundingClientRect();
@@ -467,84 +467,43 @@ function initFolders() {
   });
 }
 
-/* ══ Filmstrip — drifting graphs + full-screen viewer ═════════════════ */
+/* ══ Graph index — hover or click a name to show its graph ═══════════ */
 
-function initFilmstrip() {
-  const strip = $("#filmstrip");
-  const viewer = $("#viewer");
-  if (!strip || !viewer) return;
+function initGraphIndex() {
+  const root = $("#beat-graphs");
+  if (!root) return;
 
-  const track = $(".film-track", strip);
-  const tiles = $$(".film-tile", track);
-  const items = tiles.map((t) => ({
-    src: $("img", t).getAttribute("src"),
-    name: $(".film-cap", t).textContent.trim(),
-  }));
-  const N = items.length;
-
-  // A second copy of the tiles makes the drift loop seamless.
-  tiles.forEach((t) => {
-    const copy = t.cloneNode(true);
-    copy.tabIndex = -1;
-    copy.setAttribute("aria-hidden", "true");
-    track.append(copy);
-  });
-
-  const vImg = $(".viewer-card img", viewer);
-  const vName = $(".viewer-name", viewer);
-  const closeBtn = $(".viewer-close", viewer);
-  let current = 0;
-  let lastFocus = null;
+  const imgs = $$(".graph-frame img", root);
+  const items = $$(".graph-item", root);
+  const name = $(".graph-name", root);
+  const group = $(".graph-group-name", root);
 
   const show = (i) => {
-    current = (i + N) % N;
-    vImg.src = items[current].src;
-    vImg.alt = `${items[current].name} network graph`;
-    vName.innerHTML = `<span>${String(current + 1).padStart(2, "0")} / ${N}</span>${items[current].name}`;
+    imgs.forEach((el, k) => el.classList.toggle("on", k === i));
+    items.forEach((b, k) => {
+      b.classList.toggle("on", k === i);
+      b.setAttribute("aria-pressed", String(k === i));
+    });
+    name.textContent = items[i].lastChild.textContent.trim();
+    group.textContent = $(".graph-group-label", items[i].closest(".graph-group")).textContent;
   };
 
-  const open = (i) => {
-    lastFocus = document.activeElement;
-    show(i);
-    viewer.hidden = false;
-    document.documentElement.style.overflow = "hidden";
-    closeBtn.focus();
-  };
-
-  const close = () => {
-    viewer.hidden = true;
-    document.documentElement.style.overflow = "";
-    lastFocus?.focus();
-  };
-
-  track.addEventListener("click", (e) => {
-    const tile = e.target.closest(".film-tile");
-    if (tile) open(Number(tile.dataset.index));
+  items.forEach((b) => {
+    const i = Number(b.dataset.index);
+    b.addEventListener("click", () => show(i));
+    b.addEventListener("mouseenter", () => show(i));
+    b.addEventListener("focus", () => show(i));
   });
 
-  $$("[data-step]", viewer).forEach((b) =>
-    b.addEventListener("click", () => show(current + Number(b.dataset.step)))
-  );
-  closeBtn.addEventListener("click", close);
-  viewer.addEventListener("click", (e) => {
-    if (e.target === viewer) close();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (viewer.hidden) return;
-    if (e.key === "Escape") close();
-    if (e.key === "ArrowRight") show(current + 1);
-    if (e.key === "ArrowLeft") show(current - 1);
-  });
-
-  let touchX = null;
-  viewer.addEventListener("touchstart", (e) => (touchX = e.changedTouches[0]?.clientX ?? null), { passive: true });
-  viewer.addEventListener("touchend", (e) => {
-    if (touchX == null) return;
-    const dx = (e.changedTouches[0]?.clientX ?? touchX) - touchX;
-    touchX = null;
-    if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
-  }, { passive: true });
+  // Warm the cache once the section is near, so swaps are instant.
+  new IntersectionObserver(
+    ([e], io) => {
+      if (!e.isIntersecting) return;
+      imgs.forEach((el) => (el.loading = "eager"));
+      io.disconnect();
+    },
+    { rootMargin: "400px 0px" }
+  ).observe(root);
 }
 
 /* ══ Beat C — lazy video + scale on scroll ════════════════════════════ */
@@ -598,7 +557,7 @@ initReveals();
 initTypewriter();
 initCanvases();
 initFolders();
-initFilmstrip();
+initGraphIndex();
 initVideo();
 
 window.addEventListener("load", () => ScrollTrigger.refresh());
