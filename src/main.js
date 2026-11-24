@@ -467,92 +467,84 @@ function initFolders() {
   });
 }
 
-/* ══ Gallery stack — click / swipe / arrows to rotate ═════════════════ */
+/* ══ Filmstrip — drifting graphs + full-screen viewer ═════════════════ */
 
-function initGalleryStack() {
-  const root = $("#gallery-stack");
-  if (!root) return;
+function initFilmstrip() {
+  const strip = $("#filmstrip");
+  const viewer = $("#viewer");
+  if (!strip || !viewer) return;
 
-  const cards = $$(".gallery-card", root);
-  const hit = $(".gallery-hit", root);
-  if (!cards.length || !hit) return;
+  const track = $(".film-track", strip);
+  const tiles = $$(".film-tile", track);
+  const items = tiles.map((t) => ({
+    src: $("img", t).getAttribute("src"),
+    name: $(".film-cap", t).textContent.trim(),
+  }));
+  const N = items.length;
 
-  let order = cards.map((_, i) => i);
-  let busy = false;
-
-  const layout = () => {
-    order.forEach((cardIndex, depth) => {
-      const card = cards[cardIndex];
-      const isFront = depth === 0;
-      const offset = depth * 14;
-      const scale = 1 - depth * 0.045;
-      card.style.zIndex = String(cards.length - depth);
-      card.style.opacity = depth > 3 ? "0" : String(1 - depth * 0.08);
-      card.style.pointerEvents = isFront ? "auto" : "none";
-      card.style.transform = `translate3d(${offset}px, ${offset}px, 0) scale(${scale})`;
-    });
-  };
-
-  const advance = () => {
-    if (busy || order.length < 2) return;
-    busy = true;
-    const frontIdx = order[0];
-    const front = cards[frontIdx];
-
-    if (reduceMotion) {
-      order = [...order.slice(1), frontIdx];
-      layout();
-      busy = false;
-      return;
-    }
-
-    front.style.transition = "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease";
-    front.style.transform = "translate3d(-28%, -8%, 0) rotate(-8deg) scale(0.92)";
-    front.style.opacity = "0";
-
-    window.setTimeout(() => {
-      order = [...order.slice(1), frontIdx];
-      front.style.transition = "none";
-      layout();
-      // Force reflow so the next transition starts clean.
-      void front.offsetWidth;
-      front.style.transition = "";
-      busy = false;
-    }, 420);
-  };
-
-  layout();
-
-  hit.addEventListener("click", (e) => {
-    e.preventDefault();
-    advance();
+  // A second copy of the tiles makes the drift loop seamless.
+  tiles.forEach((t) => {
+    const copy = t.cloneNode(true);
+    copy.tabIndex = -1;
+    copy.setAttribute("aria-hidden", "true");
+    track.append(copy);
   });
 
-  root.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") {
-      e.preventDefault();
-      advance();
-    }
+  const vImg = $(".viewer-card img", viewer);
+  const vName = $(".viewer-name", viewer);
+  const closeBtn = $(".viewer-close", viewer);
+  let current = 0;
+  let lastFocus = null;
+
+  const show = (i) => {
+    current = (i + N) % N;
+    vImg.src = items[current].src;
+    vImg.alt = `${items[current].name} network graph`;
+    vName.innerHTML = `<span>${String(current + 1).padStart(2, "0")} / ${N}</span>${items[current].name}`;
+  };
+
+  const open = (i) => {
+    lastFocus = document.activeElement;
+    show(i);
+    viewer.hidden = false;
+    document.documentElement.style.overflow = "hidden";
+    closeBtn.focus();
+  };
+
+  const close = () => {
+    viewer.hidden = true;
+    document.documentElement.style.overflow = "";
+    lastFocus?.focus();
+  };
+
+  track.addEventListener("click", (e) => {
+    const tile = e.target.closest(".film-tile");
+    if (tile) open(Number(tile.dataset.index));
+  });
+
+  $$("[data-step]", viewer).forEach((b) =>
+    b.addEventListener("click", () => show(current + Number(b.dataset.step)))
+  );
+  closeBtn.addEventListener("click", close);
+  viewer.addEventListener("click", (e) => {
+    if (e.target === viewer) close();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (viewer.hidden) return;
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowRight") show(current + 1);
+    if (e.key === "ArrowLeft") show(current - 1);
   });
 
   let touchX = null;
-  root.addEventListener(
-    "touchstart",
-    (e) => {
-      touchX = e.changedTouches[0]?.clientX ?? null;
-    },
-    { passive: true }
-  );
-  root.addEventListener(
-    "touchend",
-    (e) => {
-      if (touchX == null) return;
-      const dx = (e.changedTouches[0]?.clientX ?? touchX) - touchX;
-      touchX = null;
-      if (Math.abs(dx) > 40) advance();
-    },
-    { passive: true }
-  );
+  viewer.addEventListener("touchstart", (e) => (touchX = e.changedTouches[0]?.clientX ?? null), { passive: true });
+  viewer.addEventListener("touchend", (e) => {
+    if (touchX == null) return;
+    const dx = (e.changedTouches[0]?.clientX ?? touchX) - touchX;
+    touchX = null;
+    if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+  }, { passive: true });
 }
 
 /* ══ Beat C — lazy video + scale on scroll ════════════════════════════ */
@@ -606,7 +598,7 @@ initReveals();
 initTypewriter();
 initCanvases();
 initFolders();
-initGalleryStack();
+initFilmstrip();
 initVideo();
 
 window.addEventListener("load", () => ScrollTrigger.refresh());
